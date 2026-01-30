@@ -86,8 +86,8 @@
             width: 100%;
             height: 100%;
             background-image:
-                linear-gradient(rgba(0, 240, 255, 0.02) 1px, transparent 1px),
-                linear-gradient(90deg, rgba(0, 240, 255, 0.02) 1px, transparent 1px);
+                linear-gradient(rgba(0, 240, 255, 0.014) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0, 240, 255, 0.014) 1px, transparent 1px);
             background-size: 100px 100px;
             animation: gridMove 40s linear infinite;
             z-index: -2;
@@ -104,7 +104,7 @@
             position: fixed;
             border-radius: 50%;
             filter: blur(80px);
-            opacity: 0.08;
+            opacity: 0.056;
             z-index: -1;
             pointer-events: none;
         }
@@ -152,7 +152,7 @@
             box-shadow: 0 0 8px var(--neon-cyan);
             z-index: -1;
             pointer-events: none;
-            opacity: 0.15;
+            opacity: 0.11;
         }
 
         /* Binary Rain Effect */
@@ -164,7 +164,7 @@
             height: 100%;
             pointer-events: none;
             z-index: -1;
-            opacity: 0.03;
+            opacity: 0.021;
         }
 
         .binary-digit {
@@ -1511,10 +1511,7 @@
 </head>
 <body>
     <!-- Enhanced Background Elements -->
-    <div class="cyber-grid"></div>
-    <div class="orb orb-1"></div>
-    <div class="orb orb-2"></div>
-    <div class="orb orb-3"></div>
+    <div class="aurora-glow"></div>
     <canvas id="neural-network-canvas"></canvas>
     <div class="binary-rain" id="binaryRain"></div>
 
@@ -2193,13 +2190,15 @@
     </div>
 
     <script>
-        // Enhanced Neural Network Canvas Animation
+        // PREMIUM OCEAN OF DATA - Smooth & Visually Intricate
         function initNeuralNetworkCanvas() {
             const canvas = document.getElementById('neural-network-canvas');
             if (!canvas) return;
 
-            const ctx = canvas.getContext('2d');
+            const ctx = canvas.getContext('2d', { alpha: true, willReadFrequently: false });
             let animationId;
+            let time = 0;
+            const isMobile = window.innerWidth <= 768;
 
             function resizeCanvas() {
                 canvas.width = window.innerWidth;
@@ -2209,190 +2208,225 @@
             resizeCanvas();
             window.addEventListener('resize', resizeCanvas);
 
-            const colors = {
-                deepPurple: '#050811',
-                cyan: '#00f3ff',
+            // Quantum Colors
+            const quantumColors = {
+                cyan: '#00d9ff',
                 magenta: '#ff00ff',
-                purple: '#b366ff',
-                pink: '#ff1a75'
+                purple: '#8b5aff',
+                blue: '#0066ff',
+                lightCyan: '#64f0ff',
+                silver: '#e0e8ff'
             };
 
-            class Node {
-                constructor(x, y) {
-                    this.x = x;
-                    this.y = y;
-                    this.radius = Math.random() * 4 + 2;
-                    this.baseRadius = this.radius;
-                    this.pulseOffset = Math.random() * Math.PI * 2;
-                    this.color = Math.random() > 0.5 ? colors.cyan : colors.purple;
-                    this.speedX = (Math.random() - 0.5) * 0.15;
-                    this.speedY = (Math.random() - 0.5) * 0.15;
-                    this.glowIntensity = Math.random() * 0.8 + 0.2;
-                }
-
-                update() {
-                    this.x += this.speedX;
-                    this.y += this.speedY;
-                    
-                    if (this.x < 0 || this.x > canvas.width) this.speedX *= -1;
-                    if (this.y < 0 || this.y > canvas.height) this.speedY *= -1;
-                    
-                    this.radius = this.baseRadius + Math.sin(Date.now() * 0.002 + this.pulseOffset) * 2;
-                }
-
-                draw() {
-                    ctx.beginPath();
-                    ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
-                    const gradient = ctx.createRadialGradient(
-                        this.x, this.y, 0,
-                        this.x, this.y, this.radius * 3
-                    );
-                    gradient.addColorStop(0, this.color);
-                    gradient.addColorStop(1, 'transparent');
-                    
-                    ctx.fillStyle = gradient;
-                    ctx.shadowColor = this.color;
-                    ctx.shadowBlur = 15 * this.glowIntensity;
-                    ctx.fill();
-                    ctx.shadowBlur = 0;
-                }
-            }
-
-            class Connection {
-                constructor(from, to) {
-                    this.from = from;
-                    this.to = to;
-                    this.opacity = Math.random() * 0.2 + 0.05;
-                    this.active = Math.random() > 0.8;
-                    this.pulseSpeed = Math.random() * 0.01 + 0.005;
-                    this.pulseOffset = Math.random() * Math.PI * 2;
-                    this.width = this.active ? 1.2 : 0.6;
-                    this.color = this.active ? colors.cyan : colors.purple;
-                }
-
-                update() {
-                    if (this.active) {
-                        this.opacity = 0.1 + Math.sin(Date.now() * this.pulseSpeed + this.pulseOffset) * 0.15;
-                    }
-                }
-
-                draw() {
-                    const distance = Math.sqrt(
-                        Math.pow(this.to.x - this.from.x, 2) + 
-                        Math.pow(this.to.y - this.from.y, 2)
-                    );
-                    
-                    if (distance > 400) return;
-                    
-                    ctx.beginPath();
-                    ctx.moveTo(this.from.x, this.from.y);
-                    ctx.lineTo(this.to.x, this.to.y);
-                    
-                    const gradient = ctx.createLinearGradient(
-                        this.from.x, this.from.y,
-                        this.to.x, this.to.y
-                    );
-                    gradient.addColorStop(0, this.color);
-                    gradient.addColorStop(1, colors.magenta);
-                    
-                    ctx.strokeStyle = gradient;
-                    ctx.globalAlpha = this.opacity;
-                    ctx.lineWidth = this.width;
-                    ctx.shadowColor = this.color;
-                    ctx.shadowBlur = this.active ? 10 : 0;
-                    ctx.stroke();
-                    ctx.globalAlpha = 1;
-                    ctx.shadowBlur = 0;
-                }
-            }
-
-            class Particle {
+            // Invisible Quantum Field Sources
+            class QuantumField {
                 constructor() {
                     this.x = Math.random() * canvas.width;
                     this.y = Math.random() * canvas.height;
-                    this.vx = (Math.random() - 0.5) * 0.4;
-                    this.vy = (Math.random() - 0.5) * 0.4;
-                    this.radius = Math.random() * 2 + 1;
-                    this.color = Math.random() > 0.5 ? colors.cyan : colors.magenta;
-                    this.opacity = Math.random() * 0.3 + 0.1;
-                    this.glow = Math.random() * 0.5 + 0.5;
+                    this.vx = (Math.random() - 0.5) * 0.3;
+                    this.vy = (Math.random() - 0.5) * 0.3;
+                    this.radius = Math.random() * 150 + 100;
+                    this.strength = Math.random() * 1.5 + 0.8;
+                    this.phase = Math.random() * Math.PI * 2;
                 }
 
-                update() {
+                update(t) {
                     this.x += this.vx;
                     this.y += this.vy;
+                    this.phase += 0.008;
 
-                    if (this.x < 0) this.x = canvas.width;
-                    if (this.x > canvas.width) this.x = 0;
-                    if (this.y < 0) this.y = canvas.height;
-                    if (this.y > canvas.height) this.y = 0;
+                    // Wrap around
+                    if (this.x < -50) this.x = canvas.width + 50;
+                    if (this.x > canvas.width + 50) this.x = -50;
+                    if (this.y < -50) this.y = canvas.height + 50;
+                    if (this.y > canvas.height + 50) this.y = -50;
+
+                    // Pulse effect
+                    this.radius = Math.random() * 150 + 100 + Math.sin(this.phase) * 40;
                 }
 
-                draw() {
+                getInfluence(x, y) {
+                    const dx = this.x - x;
+                    const dy = this.y - y;
+                    const dist = Math.sqrt(dx * dx + dy * dy);
+                    
+                    if (dist < this.radius) {
+                        const influence = (1 - dist / this.radius) * this.strength;
+                        return { x: (dx / (dist + 1)) * influence, y: (dy / (dist + 1)) * influence };
+                    }
+                    return { x: 0, y: 0 };
+                }
+            }
+
+            // Quantum Particle
+            class QuantumParticle {
+                constructor() {
+                    this.x = Math.random() * canvas.width;
+                    this.y = Math.random() * canvas.height;
+                    this.vx = (Math.random() - 0.5) * 2;
+                    this.vy = (Math.random() - 0.5) * 2;
+                    this.life = 1;
+                    this.maxLife = Math.random() * 2000 + 1500;
+                    this.age = 0;
+                    this.size = Math.random() * 2.5 + 1;
+                    this.colors = [quantumColors.cyan, quantumColors.magenta, quantumColors.purple, quantumColors.lightCyan];
+                    this.color = this.colors[Math.floor(Math.random() * this.colors.length)];
+                    this.pulse = Math.random() * Math.PI * 2;
+                    this.connectedParticles = [];
+                }
+
+                update(t, fields) {
+                    this.age++;
+                    this.life = Math.max(0, 1 - (this.age / this.maxLife));
+                    
+                    // Apply quantum field influences
+                    let totalForceX = 0;
+                    let totalForceY = 0;
+
+                    for (let field of fields) {
+                        const influence = field.getInfluence(this.x, this.y);
+                        totalForceX += influence.x;
+                        totalForceY += influence.y;
+                    }
+
+                    // Apply forces
+                    this.vx += totalForceX * 0.08;
+                    this.vy += totalForceY * 0.08;
+                    
+                    // Damping
+                    this.vx *= 0.96;
+                    this.vy *= 0.96;
+
+                    // Add slight turbulence
+                    this.vx += (Math.random() - 0.5) * 0.15;
+                    this.vy += (Math.random() - 0.5) * 0.15;
+
+                    this.x += this.vx;
+                    this.y += this.vy;
+                    this.pulse += 0.04;
+
+                    // Wrap around
+                    if (this.x < -50) this.x = canvas.width + 50;
+                    if (this.x > canvas.width + 50) this.x = -50;
+                    if (this.y < -50) this.y = canvas.height + 50;
+                    if (this.y > canvas.height + 50) this.y = -50;
+                }
+
+                draw(allParticles) {
+                    const pulseIntensity = 0.6 + Math.sin(this.pulse) * 0.35;
+                    const opacity = this.life * pulseIntensity * 0.65;
+                    
+                    // Outer glow - premium
+                    const grad1 = ctx.createRadialGradient(this.x, this.y, 0, this.x, this.y, this.size * 6);
+                    grad1.addColorStop(0, this.color + Math.floor(opacity * 0.3 * 255).toString(16).padStart(2, '0'));
+                    grad1.addColorStop(0.5, this.color + Math.floor(opacity * 0.1 * 255).toString(16).padStart(2, '0'));
+                    grad1.addColorStop(1, this.color + '00');
+                    ctx.fillStyle = grad1;
                     ctx.beginPath();
-                    ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
-                    
-                    const gradient = ctx.createRadialGradient(
-                        this.x, this.y, 0,
-                        this.x, this.y, this.radius * 2
-                    );
-                    gradient.addColorStop(0, this.color);
-                    gradient.addColorStop(1, 'transparent');
-                    
-                    ctx.fillStyle = gradient;
-                    ctx.globalAlpha = this.opacity;
-                    ctx.shadowColor = this.color;
-                    ctx.shadowBlur = 10 * this.glow;
+                    ctx.arc(this.x, this.y, this.size * 6, 0, Math.PI * 2);
                     ctx.fill();
-                    ctx.globalAlpha = 1;
-                    ctx.shadowBlur = 0;
-                }
-            }
 
-            const nodes = [];
-            const connections = [];
-            const particles = [];
+                    // Mid glow
+                    const grad2 = ctx.createRadialGradient(this.x, this.y, 0, this.x, this.y, this.size * 3);
+                    grad2.addColorStop(0, this.color + Math.floor(opacity * 0.5 * 255).toString(16).padStart(2, '0'));
+                    grad2.addColorStop(1, this.color + '00');
+                    ctx.fillStyle = grad2;
+                    ctx.beginPath();
+                    ctx.arc(this.x, this.y, this.size * 3, 0, Math.PI * 2);
+                    ctx.fill();
 
-            // Create nodes
-            for (let i = 0; i < 50; i++) {
-                nodes.push(new Node(
-                    Math.random() * canvas.width,
-                    Math.random() * canvas.height
-                ));
-            }
+                    // Core
+                    ctx.fillStyle = this.color + Math.floor(opacity * 255).toString(16).padStart(2, '0');
+                    ctx.beginPath();
+                    ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                    ctx.fill();
 
-            // Create connections
-            nodes.forEach((node, i) => {
-                for (let j = i + 1; j < nodes.length; j++) {
-                    if (Math.random() > 0.9) {
-                        connections.push(new Connection(node, nodes[j]));
+                    // Draw constellation connections
+                    const connectionDistance = 150;
+                    for (let other of allParticles) {
+                        if (other === this) continue;
+                        const dx = other.x - this.x;
+                        const dy = other.y - this.y;
+                        const dist = Math.sqrt(dx * dx + dy * dy);
+
+                        if (dist < connectionDistance && dist > 0) {
+                            const connectionOpacity = (1 - dist / connectionDistance) * opacity * 0.4;
+                            ctx.strokeStyle = this.color + Math.floor(connectionOpacity * 255).toString(16).padStart(2, '0');
+                            ctx.lineWidth = 0.8;
+                            ctx.beginPath();
+                            ctx.moveTo(this.x, this.y);
+                            ctx.lineTo(other.x, other.y);
+                            ctx.stroke();
+                        }
                     }
                 }
-            });
 
-            // Create particles
-            for (let i = 0; i < 100; i++) {
-                particles.push(new Particle());
+                isDead() {
+                    return this.age > this.maxLife;
+                }
             }
 
+            // Initialize quantum system
+            const fields = [];
+            const particles = [];
+
+            // Create quantum fields
+            const fieldCount = isMobile ? 3 : 5;
+            for (let i = 0; i < fieldCount; i++) {
+                fields.push(new QuantumField());
+            }
+
+            // Create particle stream
+            const particleCount = isMobile ? 80 : 180;
+            for (let i = 0; i < particleCount; i++) {
+                particles.push(new QuantumParticle());
+            }
+
+            let lastSpawnTime = 0;
+
             function animate() {
-                ctx.fillStyle = 'rgba(3, 6, 15, 0.03)';
+                time++;
+
+                // Premium dark background
+                const bgGradient = ctx.createLinearGradient(0, 0, 0, canvas.height);
+                bgGradient.addColorStop(0, '#0a0615');
+                bgGradient.addColorStop(0.5, '#0f0820');
+                bgGradient.addColorStop(1, '#050410');
+                ctx.fillStyle = bgGradient;
                 ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-                particles.forEach(particle => {
-                    particle.update();
-                    particle.draw();
-                });
+                // Update fields
+                for (let field of fields) {
+                    field.update(time);
+                }
 
-                connections.forEach(connection => {
-                    connection.update();
-                    connection.draw();
-                });
+                // Update particles
+                for (let particle of particles) {
+                    particle.update(time, fields);
+                }
 
-                nodes.forEach(node => {
-                    node.update();
-                    node.draw();
-                });
+                // Sort particles by life for proper rendering
+                particles.sort((a, b) => a.life - b.life);
+
+                // Draw particles and constellations
+                for (let particle of particles) {
+                    particle.draw(particles);
+                }
+
+                // Spawn new particles continuously
+                if (time - lastSpawnTime > 50) {
+                    for (let i = 0; i < (isMobile ? 2 : 4); i++) {
+                        particles.push(new QuantumParticle());
+                    }
+                    lastSpawnTime = time;
+                }
+
+                // Remove dead particles
+                for (let i = particles.length - 1; i >= 0; i--) {
+                    if (particles[i].isDead()) {
+                        particles.splice(i, 1);
+                    }
+                }
 
                 animationId = requestAnimationFrame(animate);
             }
@@ -2400,64 +2434,118 @@
             animate();
 
             return () => {
-                if (animationId) {
-                    cancelAnimationFrame(animationId);
-                }
+                if (animationId) cancelAnimationFrame(animationId);
                 window.removeEventListener('resize', resizeCanvas);
             };
         }
 
-        // Binary Rain Animation
+        // Binary Rain Animation - Ultra Subtle Cosmic Dust
         function initBinaryRain() {
             const binaryRain = document.getElementById('binaryRain');
-            const digits = '01';
+            const isMobile = window.innerWidth <= 768;
+            let digitCount = 0;
+            const maxDigits = isMobile ? 10 : 20;
             
             function createBinaryDigit() {
+                if (digitCount >= maxDigits) return;
+                
                 const digit = document.createElement('div');
                 digit.className = 'binary-digit';
                 digit.textContent = Math.random() > 0.5 ? '0' : '1';
                 
                 const left = Math.random() * 100;
-                const duration = Math.random() * 10 + 5;
+                const duration = Math.random() * 20 + 15;
                 const delay = Math.random() * 5;
                 
                 digit.style.cssText = `
                     left: ${left}%;
-                    animation: binaryFall ${duration}s ${delay}s linear infinite;
-                    opacity: ${Math.random() * 0.1 + 0.02};
-                    font-size: ${Math.random() * 10 + 10}px;
+                    animation: binaryFall ${duration}s ${delay}s linear;
+                    opacity: ${Math.random() * 0.04 + 0.01};
+                    font-size: ${Math.random() * 10 + 8}px;
                 `;
                 
                 binaryRain.appendChild(digit);
+                digitCount++;
                 
                 setTimeout(() => {
                     digit.remove();
+                    digitCount--;
                 }, (duration + delay) * 1000);
             }
             
             // Create initial digits
-            for (let i = 0; i < 30; i++) {
-                setTimeout(() => createBinaryDigit(), i * 100);
+            const initialDigits = isMobile ? 5 : 10;
+            for (let i = 0; i < initialDigits; i++) {
+                setTimeout(() => createBinaryDigit(), i * 200);
             }
-            
-            // Continuously create new digits
+
+            // Continuously create new digits (much slower)
             setInterval(() => {
                 createBinaryDigit();
-            }, 200);
+            }, isMobile ? 2000 : 1500);
         }
 
-        // Circuit Lines Animation
+        // Add vertical light beam effects
+        function initLightBeams() {
+            const isMobile = window.innerWidth <= 768;
+            const beamCount = isMobile ? 2 : 4;
+            
+            for (let i = 0; i < beamCount; i++) {
+                const beam = document.createElement('div');
+                beam.className = 'light-beam';
+                
+                const width = Math.random() * 200 + 100;
+                const left = Math.random() * 100;
+                const duration = Math.random() * 8 + 6;
+                const delay = Math.random() * 4;
+                
+                beam.style.cssText = `
+                    left: ${left}%;
+                    width: ${width}px;
+                    animation: beamPulse ${duration}s ${delay}s infinite ease-in-out;
+                `;
+                
+                document.body.appendChild(beam);
+            }
+            
+            const style = document.createElement('style');
+            style.textContent = `
+                .light-beam {
+                    position: fixed;
+                    top: 0;
+                    height: 100%;
+                    background: linear-gradient(180deg,
+                        transparent 0%,
+                        rgba(0, 243, 255, 0.08) 20%,
+                        rgba(255, 0, 255, 0.06) 50%,
+                        rgba(0, 243, 255, 0.08) 80%,
+                        transparent 100%);
+                    pointer-events: none;
+                    z-index: -1;
+                    box-shadow: 0 0 60px rgba(0, 243, 255, 0.3);
+                }
+                
+                @keyframes beamPulse {
+                    0%, 100% { opacity: 0.3; }
+                    50% { opacity: 0.8; }
+                }
+            `;
+            document.head.appendChild(style);
+        }
+
+        // Circuit Lines Animation - ULTRA LIGHT
         function initCircuitLines() {
-            const circuitCount = 12;
+            const isMobile = window.innerWidth <= 768;
+            const circuitCount = isMobile ? 3 : 6;
             
             for (let i = 0; i < circuitCount; i++) {
                 const circuit = document.createElement('div');
                 circuit.className = 'circuit-line';
                 
                 const isHorizontal = Math.random() > 0.5;
-                const length = Math.random() * 300 + 100;
-                const speed = Math.random() * 3 + 2;
-                const delay = Math.random() * 4;
+                const length = Math.random() * 250 + 80;
+                const speed = Math.random() * 4 + 3;
+                const delay = Math.random() * 3;
                 
                 if (isHorizontal) {
                     circuit.style.cssText = `
@@ -2479,37 +2567,20 @@
                 
                 document.body.appendChild(circuit);
             }
-            
-            const style = document.createElement('style');
-            style.textContent = `
-                @keyframes circuitHorizontal {
-                    0% { transform: translateX(-100px) translateY(0); opacity: 0; }
-                    10% { opacity: 0.2; }
-                    90% { opacity: 0.2; }
-                    100% { transform: translateX(100px) translateY(${Math.random() * 20 - 10}px); opacity: 0; }
-                }
-                
-                @keyframes circuitVertical {
-                    0% { transform: translateY(-100px) translateX(0); opacity: 0; }
-                    10% { opacity: 0.2; }
-                    90% { opacity: 0.2; }
-                    100% { transform: translateY(100px) translateX(${Math.random() * 20 - 10}px); opacity: 0; }
-                }
-            `;
-            document.head.appendChild(style);
         }
 
-        // Data Stream Lines
+        // Data Stream Lines - OPTIMIZED
         function initDataStreamLines() {
-            const streamCount = 15;
+            const isMobile = window.innerWidth <= 768;
+            const streamCount = isMobile ? 3 : 6;
             
             for (let i = 0; i < streamCount; i++) {
                 const stream = document.createElement('div');
                 stream.className = 'data-stream-line';
                 
-                const width = Math.random() * 300 + 150;
-                const speed = Math.random() * 3 + 1.5;
-                const delay = Math.random() * 6;
+                const width = Math.random() * 250 + 100;
+                const speed = Math.random() * 4 + 2;
+                const delay = Math.random() * 5;
                 const top = Math.random() * 100;
                 const color = Math.random() > 0.5 ? 'var(--neon-cyan)' : 'var(--neon-purple)';
                 
@@ -2518,47 +2589,90 @@
                     top: ${top}%;
                     left: ${Math.random() * 100}%;
                     background: linear-gradient(90deg, transparent, ${color}, transparent);
-                    box-shadow: 0 0 15px ${color};
+                    box-shadow: 0 0 12px ${color};
                     animation: streamMove ${speed}s ${delay}s infinite linear;
-                    opacity: ${Math.random() * 0.1 + 0.05};
+                    opacity: ${Math.random() * 0.08 + 0.03};
                 `;
                 
                 document.body.appendChild(stream);
             }
-            
-            const style = document.createElement('style');
-            style.textContent = `
-                @keyframes streamMove {
-                    0% { transform: translateX(-200px) rotate(${Math.random() * 10 - 5}deg); opacity: 0; }
-                    10% { opacity: 0.15; }
-                    90% { opacity: 0.15; }
-                    100% { transform: translateX(200px) rotate(${Math.random() * 10 - 5}deg); opacity: 0; }
-                }
-            `;
-            document.head.appendChild(style);
         }
 
-        // Enhanced Scroll Animation
+// Enhanced Scroll Animation - BLAZINGLY FAST & LIGHT
         function initScrollAnimations() {
-            const fadeElements = document.querySelectorAll('.fade-in');
+          const fadeElements = document.querySelectorAll('.fade-in');
+          
+          const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+              if (entry.isIntersecting) {
+                entry.target.classList.add('visible');
+                observer.unobserve(entry.target);
+              }
+            });
+          }, {
+            threshold: 0.02,
+            rootMargin: '0px 0px -50px 0px'
+          });
+          
+          fadeElements.forEach((element) => {
+            observer.observe(element);
+          });
+        }
+
+        // Glitch Text Animation on Hover
+        function initGlitchEffects() {
+          const titles = document.querySelectorAll('.section-title, .hero-title, .project-title');
+          
+          titles.forEach(title => {
+            title.addEventListener('mouseenter', () => {
+              title.classList.add('glitch-effect');
+              setTimeout(() => {
+                title.classList.remove('glitch-effect');
+              }, 800);
+            });
+          });
+        }
+
+// Interactive Particle Trail on Scroll - THROTTLED
+        function initInteractiveParticles() {
+            let lastScrollTop = 0;
+            let lastParticleTime = 0;
+            const particleDelay = 50; // ms between particle creation
             
-            const observer = new IntersectionObserver((entries) => {
-                entries.forEach(entry => {
-                    if (entry.isIntersecting) {
-                        setTimeout(() => {
-                            entry.target.classList.add('visible');
-                        }, entry.target.dataset.delay || 0);
+            window.addEventListener('scroll', () => {
+                const scrollTop = window.pageYOffset;
+                const scrollSpeed = Math.abs(scrollTop - lastScrollTop);
+                const now = Date.now();
+                
+                // Create particles less frequently
+                if (scrollSpeed > 10 && now - lastParticleTime > particleDelay) {
+                    for (let i = 0; i < Math.min(2, Math.floor(scrollSpeed / 30)); i++) {
+                        createScrollParticle();
                     }
-                });
-            }, {
-                threshold: 0.1,
-                rootMargin: '0px 0px -100px 0px'
-            });
+                    lastParticleTime = now;
+                }
+                lastScrollTop = scrollTop;
+            }, { passive: true });
+        }
+
+        function createScrollParticle() {
+            const particle = document.createElement('div');
+            const size = Math.random() * 6 + 3;
+            particle.style.cssText = `
+                position: fixed;
+                width: ${size}px;
+                height: ${size}px;
+                background: ${Math.random() > 0.5 ? '#00f3ff' : '#ff00ff'};
+                border-radius: 50%;
+                left: ${Math.random() * window.innerWidth}px;
+                top: ${window.pageYOffset + Math.random() * 100}px;
+                pointer-events: none;
+                z-index: 100;
+                animation: particleFloat 0.8s ease-out forwards;
+            `;
             
-            fadeElements.forEach((element, index) => {
-                element.dataset.delay = index * 100;
-                observer.observe(element);
-            });
+            document.body.appendChild(particle);
+            setTimeout(() => particle.remove(), 800);
         }
 
         // Initialize everything when DOM is loaded
@@ -2568,6 +2682,8 @@
             initCircuitLines();
             initDataStreamLines();
             initScrollAnimations();
+            initGlitchEffects();
+            initInteractiveParticles();
             
             // Add welcome screen removal
             setTimeout(() => {
